@@ -3,17 +3,39 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
+#include <format>
+#include <cmath>
+#include <stack>
+#include <unordered_map>
 
 using namespace std;
 
+// function declaration----------------------------------------
 void merge(vector<int>& nums1, int m, vector<int>& nums2, int n);
 bool isPalindrome(string s);
 bool canConstruct(string ransomNote, string magazine);
 vector<string> summaryRanges(vector<int>& nums);
 
+
+
+//-------------------------------------------------------------
+
+struct ListNode 
+{
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+
+//-------------------------------------------------------------
 int main()
 {
-    
+   //std::cout << __cplusplus << std::endl; check cplus version
+
+   
+    return 0;
 }
 
 void merge(vector<int>& nums1, int m, vector<int>& nums2, int n)
@@ -104,7 +126,88 @@ bool canConstruct(string ransomNote, string magazine)
 
 vector<string> summaryRanges(vector<int>& nums)
 {
-    sda
+    vector<string> answer;
+
+    if (nums.size() < 1)
+        return answer;
+
+    int start = nums[0];
+    for (size_t i = 0; i < nums.size()-1; i++)
+    {
+        if (nums[i]+1 != nums[i + 1])
+        {
+            if(start == nums[i])
+                answer.push_back(to_string( start));
+            else
+                answer.push_back(format("{}->{}", start, nums[i]));
+
+            start = nums[i + 1];
+        }
+
+    }
+
+    if(start == nums[nums.size()-1])
+        answer.push_back(to_string(start));
+    else
+        answer.push_back(format("{}->{}", start, nums[nums.size() - 1]));
+
+    return answer;
+}
+
+bool isValid(string s) 
+{
+    std::stack<char> st;
+    for (char c : s) 
+    {
+        
+        if (c == '(' || c == '{' || c == '[')
+        {
+            st.push(c);
+        }
+        else 
+        {
+            if (st.empty()) return false;
+
+            char top = st.top();
+            if ((c == ')' && top == '(') ||
+                (c == '}' && top == '{') ||
+                (c == ']' && top == '[')) {
+                st.pop();
+            }
+            else 
+            {
+                return false;
+            }
+        }
+    }
+
+    return st.empty();
+
+}
+
+bool hasCycle(ListNode* head) 
+{
+    unordered_map< ListNode* , ListNode*> umap;
+    ListNode* node = head;
+
+    if (head == nullptr)
+        return false;
+
+    while(node->next != nullptr)
+    {
+        if (umap.find(node) == umap.end())
+        {
+            umap[node] = node->next;
+        }
+        else 
+        {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    return false;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
