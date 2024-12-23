@@ -8,26 +8,41 @@
 #include <cmath>
 #include <stack>
 #include <unordered_map>
+#include <queue>
+#include <algorithm>
+#include <cstdlib> // absolute
 
 using namespace std;
+//-struct------------------------------------------------------
 
-// function declaration----------------------------------------
-void merge(vector<int>& nums1, int m, vector<int>& nums2, int n);
-bool isPalindrome(string s);
-bool canConstruct(string ransomNote, string magazine);
-vector<string> summaryRanges(vector<int>& nums);
-
-
-
-//-------------------------------------------------------------
-
-struct ListNode 
+struct ListNode
 {
     int val;
     ListNode* next;
     ListNode(int x) : val(x), next(NULL) {}
 };
 
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode* left, TreeNode* right) : val(x), left(left), right(right) {}
+};
+
+
+// function declaration----------------------------------------
+void merge(vector<int>& nums1, int m, vector<int>& nums2, int n);
+bool isPalindrome(string s);
+bool canConstruct(string ransomNote, string magazine);
+vector<string> summaryRanges(vector<int>& nums);
+int maxDepth(TreeNode* root);
+vector<double> averageOfLevels(TreeNode* root);
+int getMinimumDifference(TreeNode* root);
+TreeNode* sortedArrayToBST(vector<int>& nums);
 
 //-------------------------------------------------------------
 int main()
@@ -70,7 +85,6 @@ void merge(vector<int>& nums1, int m, vector<int>& nums2, int n)
 
     nums1 = answer;
 }
-
 bool isPalindrome(string s)
 {
     std::string filtered;
@@ -100,7 +114,6 @@ bool isPalindrome(string s)
     return true;
     
 }
-
 bool canConstruct(string ransomNote, string magazine)
 {
     vector<int> aphabetCount(27,0);
@@ -123,7 +136,6 @@ bool canConstruct(string ransomNote, string magazine)
 
     return true;
 }
-
 vector<string> summaryRanges(vector<int>& nums)
 {
     vector<string> answer;
@@ -153,7 +165,6 @@ vector<string> summaryRanges(vector<int>& nums)
 
     return answer;
 }
-
 bool isValid(string s) 
 {
     std::stack<char> st;
@@ -184,7 +195,6 @@ bool isValid(string s)
     return st.empty();
 
 }
-
 bool hasCycle(ListNode* head) 
 {
     unordered_map< ListNode* , ListNode*> umap;
@@ -209,6 +219,101 @@ bool hasCycle(ListNode* head)
 
     return false;
 }
+int maxDepth(TreeNode* root)
+{
+    stack<pair<TreeNode*, int>> st;
+    st.push({ root, 1 });
+    int deepest = 0;
+
+    while (!st.empty())
+    {
+        auto [node, d] = st.top();
+        st.pop();
+
+        if (node == nullptr) continue;
+        if (d > deepest)
+            deepest = d;
+
+
+        if (node->right) st.push({ node->right, d + 1 });
+        if (node->left)  st.push({ node->left, d + 1 });
+      
+    }
+
+    return deepest;
+}
+vector<double> averageOfLevels(TreeNode* root) 
+{
+    vector<double> averages; 
+
+    if (!root) return averages;
+
+    queue<TreeNode*> q; 
+    q.push(root); 
+
+    while (!q.empty()) 
+    { 
+        int size = q.size(); 
+        double sum = 0; 
+
+        for (int i = 0; i < size; ++i) 
+        { 
+            TreeNode* node = q.front();
+            q.pop(); 
+
+            sum += node->val; 
+
+            if (node->left) q.push(node->left); 
+            if (node->right) q.push(node->right);
+        }
+
+        averages.push_back(sum / size); 
+    }
+
+    return averages;
+}
+int getMinimumDifference(TreeNode* root)
+{
+    queue<TreeNode*> q;
+    q.push(root);
+
+    vector<int> values;
+
+    while (!q.empty())
+    {
+        int size = q.size();
+       
+        for (int i = 0; i < size; ++i)
+        {
+            TreeNode* node = q.front();
+            q.pop();
+
+            values.push_back(abs(node->val));
+
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+    }
+
+    sort(values.begin(),values.end());
+
+    int minimumD = values[values.size() - 1];
+    for (size_t i = 0; i < values.size()-1; i++)
+    {
+       minimumD = min(minimumD, values[i + 1] - values[i]);
+    }
+
+    return minimumD;
+}
+
+TreeNode* sortedArrayToBST(vector<int>& nums)
+{
+    int rootindex = nums.size() / 2;
+
+       
+}
+ 
+ 
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
